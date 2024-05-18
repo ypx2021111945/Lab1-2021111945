@@ -304,7 +304,7 @@ public class App
 //-----------------------------------------------------------------------------------
         //开始随机游走
         System.out.println("Begin random walk:");
-        randomWalk(graph);
+        randomWalk(graph);// r5 modify
         //test
     }
 }
