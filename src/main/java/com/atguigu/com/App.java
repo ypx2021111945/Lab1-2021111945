@@ -70,7 +70,7 @@ public class App
         writer.close();
     }
 
-    public static void convertDotToImage(String dotFilePath, String imageFilePath) {
+    public static void showDirectedGraph(String dotFilePath, String imageFilePath) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("dot", "-Tpng", dotFilePath, "-o", imageFilePath);
             Process process = processBuilder.start();
@@ -81,7 +81,7 @@ public class App
         }
     }
 
-    public static List<String> findBridgeWords(String word1, String word2, Map<String, Map<String, Integer>> graph) {
+    public static List<String> queryBridgeWords(String word1, String word2, Map<String, Map<String, Integer>> graph) {
         List<String> bridgeWords = new ArrayList<>();
         if(graph.containsKey(word1) && graph.containsKey(word2)){
             for (String word3 : graph.keySet()) {
@@ -93,12 +93,12 @@ public class App
         return bridgeWords;
     }
 
-    public static String processNewText(String newText, Map<String, Map<String, Integer>> graph) {
+    public static String generateNewText(String newText, Map<String, Map<String, Integer>> graph) {
         String[] words = newText.toLowerCase().split("\\s+");
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < words.length - 1; i++) {
-            List<String> bridgeWords = findBridgeWords(words[i], words[i + 1], graph);
+            List<String> bridgeWords = queryBridgeWords(words[i], words[i + 1], graph);
             if (!bridgeWords.isEmpty()) {
                 String bridgeWord = bridgeWords.get(new Random().nextInt(bridgeWords.size()));
                 sb.append(words[i]).append(" ").append(bridgeWord).append(" ");
@@ -110,7 +110,7 @@ public class App
         return sb.toString();
     }
 
-    public static List<List<String>> findAllShortestPaths(String word1, String word2, Map<String, Map<String, Integer>> graph) {
+    public static List<List<String>> calcShortestPath(String word1, String word2, Map<String, Map<String, Integer>> graph) {
         Queue<List<String>> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
         queue.add(Arrays.asList(word1));
@@ -189,7 +189,7 @@ public class App
         return shortestPath;
     }
 
-    public static void randomTraversal(Map<String, Map<String, Integer>> graph) throws IOException {
+    public static void randomWalk(Map<String, Map<String, Integer>> graph) throws IOException {
         Random random = new Random();
         List<String> nodes = new ArrayList<>(graph.keySet());
         String currentNode = nodes.get(random.nextInt(nodes.size()));
@@ -232,7 +232,7 @@ public class App
 //-----------------------------------------------------------------------------------
         String dotFilePath = "output.dot"; // 输入的dot文件路径
         String imageFilePath = "image.png"; // 输出的图像文件路径
-        convertDotToImage(dotFilePath, imageFilePath);
+        showDirectedGraph(dotFilePath, imageFilePath);
 //-----------------------------------------------------------------------------------
         //获取用户输入
         @SuppressWarnings("resource")
@@ -243,7 +243,7 @@ public class App
         String word2 = scanner.nextLine().toLowerCase();
 
         //查询桥接词
-        List<String> bridgeWords = findBridgeWords(word1, word2, graph);
+        List<String> bridgeWords = queryBridgeWords(word1, word2, graph);
         if (!graph.containsKey(word1) || !graph.containsKey(word2)) {
             System.out.println("No " + word1 + " or " + word2 + " in the graph!");
         } else if (bridgeWords.isEmpty()) {
@@ -259,7 +259,7 @@ public class App
         String newText = scanner1.nextLine();
         
         // 处理新文本并输出结果
-        String result = processNewText(newText, graph);
+        String result = generateNewText(newText, graph);
         System.out.println("The processed text is: " + result);
 //-----------------------------------------------------------------------------------
         // 获取用户输入的单词
@@ -276,7 +276,7 @@ public class App
             String word4 = scanner.nextLine().toLowerCase();
 
             // 查找两个单词之间的所有最短路径
-            List<List<String>> allShortestPaths = findAllShortestPaths(word3, word4, graph);
+            List<List<String>> allShortestPaths = calcShortestPath(word3, word4, graph);
             if (allShortestPaths.isEmpty()) {
                 System.out.println("No path from " + word3 + " to " + word4 + "!");
             } else {
@@ -304,6 +304,6 @@ public class App
 //-----------------------------------------------------------------------------------
         //开始随机游走
         System.out.println("Begin random walk:");
-        randomTraversal(graph);
+        randomWalk(graph);
     }
 }
