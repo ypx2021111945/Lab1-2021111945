@@ -306,5 +306,6 @@ public class App
         System.out.println("Begin random walk:");
         randomWalk(graph);
         //test
+        //r4 modify
     }
 }
